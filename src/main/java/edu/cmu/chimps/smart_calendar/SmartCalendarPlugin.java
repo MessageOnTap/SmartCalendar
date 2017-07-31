@@ -120,7 +120,7 @@ public class SmartCalendarPlugin extends MessageOnTapPlugin {
         if (triggerListShow.contains(params.get("trigger"))){               //有没有可能符合两个trigger？希望pms能每符合一个trigger就发一次init
             tree1 = (Tree)params.get("tree");
             EventTime1 = AddRootAndGetTime(tree1);                    //Retrieval events
-            params.put("tree", tree1);
+            params.put("tree", tree1+"");
 
             TidShow1 = newTaskRequest(sid, MethodConstants.PKG, MethodConstants.GRAPH_RETRIEVAL, params);
         }
@@ -185,16 +185,9 @@ public class SmartCalendarPlugin extends MessageOnTapPlugin {
             }
     }
 
-<<<<<<< HEAD
-=======
+
     private String getHtml(ArrayList<String> eventList, String EventTime1){
         String html = "";
->>>>>>> 9f627f897018a8a318cb7e853218e1a6af9a577b
-
-    protected String getHtml(ArrayList<String> eventList,String EventTime){
-
-
-
         int year;
         ////////////////年月日份表///////////////////
         String yeartablehtml = ".year{\n" +
