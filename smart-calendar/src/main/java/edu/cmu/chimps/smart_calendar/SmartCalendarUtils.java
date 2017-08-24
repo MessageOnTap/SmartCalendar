@@ -41,33 +41,32 @@ public class SmartCalendarUtils {
     public static final String HOUR = "hour";
     public static final String MINUTE = "minute";
 
-    public static Long getTid (HashMap<Long, Long> map, Long sid){
-        if (map.get(sid) != null){
+    public static Long getTid(HashMap<Long, Long> map, Long sid) {
+        if (map.get(sid) != null) {
             return map.get(sid);
         }
         return (Long) (long) -1;
     }
 
 
-    public static String getTimeString(HashMap<String, Object> params){
+    public static String getTimeString(HashMap<String, Object> params) {
         ArrayList<Long> messageTime = (ArrayList<Long>) params.get(ServiceAttributes.PMS.CURRENT_MESSAGE_EMBEDDED_TIME);      //CURRENT_MESSAGE_EMBEDDED_TIME
-        StringBuilder timeString =  new StringBuilder();
+        StringBuilder timeString = new StringBuilder();
         try {
             timeString.append(messageTime.get(0)).append(",").append(messageTime.get(1));
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
 
-        return  timeString.toString();
+        return timeString.toString();
     }
 
 
-
-    public static ParseTree AddRootEventName(ParseTree tree, String time, Tag tag_time){
+    public static ParseTree AddRootEventName(ParseTree tree, String time, Tag tag_time) {
         SparseArray<ParseTree.Node> nodeList = tree.getNodeList();
         int key = 0;
-        for(int i = 0; i < nodeList.size(); i++) {
+        for (int i = 0; i < nodeList.size(); i++) {
             key = nodeList.keyAt(i);
             ParseTree.Node node = nodeList.get(key);
             if (node.getParentId() == -1) {
@@ -84,10 +83,10 @@ public class SmartCalendarUtils {
                 break;
             }
         }
-        for(int i = 0; i < nodeList.size(); i++) {
+        for (int i = 0; i < nodeList.size(); i++) {
             key = nodeList.keyAt(i);
             ParseTree.Node node = nodeList.get(key);
-            if (node.getTagList().contains(tag_time)){
+            if (node.getTagList().contains(tag_time)) {
                 node.getTagList().clear();
                 node.setWord(time);                         //The former root "time" need to be added a real time
                 node.addTag(ServiceAttributes.Graph.Event.TIME);
@@ -98,10 +97,10 @@ public class SmartCalendarUtils {
         return tree;
     }
 
-    public static ParseTree AddRootLocation(ParseTree tree, String time, Tag tag_time){
-        for (int i=0; i < tree.getNodeList().size(); i++){
+    public static ParseTree AddRootLocation(ParseTree tree, String time, Tag tag_time) {
+        for (int i = 0; i < tree.getNodeList().size(); i++) {
             ParseTree.Node node = tree.getNodeList().get(i);
-            if (node.getParentId() == -1){
+            if (node.getParentId() == -1) {
                 node.setParentId(LOCATION_ROOT_ID);
                 ParseTree.Node newNode = new ParseTree.Node();
                 newNode.setId(LOCATION_ROOT_ID);
@@ -111,7 +110,7 @@ public class SmartCalendarUtils {
                 newNode.setChildrenIds(set);
                 newNode.addTag(ServiceAttributes.Graph.Place.NAME);
             }
-            if (node.getTagList().contains(tag_time)){
+            if (node.getTagList().contains(tag_time)) {
                 node.getTagList().clear();
                 node.setWord(time);
                 node.addTag(ServiceAttributes.Graph.Document.CREATED_TIME);
@@ -121,9 +120,9 @@ public class SmartCalendarUtils {
         return tree;
     }
 
-    public static ArrayList<Event> getEventList(HashMap<String, Object> params){
+    public static ArrayList<Event> getEventList(HashMap<String, Object> params) {
         ArrayList<Event> EventList = new ArrayList<>();
-        ArrayList<HashMap<String, Object>> cardList = (ArrayList<HashMap<String, Object>>)JSONUtils.jsonToSimpleObject((String)params.get(ServiceAttributes.Graph.CARD_LIST), JSONUtils.TYPE_CARD_LIST);
+        ArrayList<HashMap<String, Object>> cardList = (ArrayList<HashMap<String, Object>>) JSONUtils.jsonToSimpleObject((String) params.get(ServiceAttributes.Graph.CARD_LIST), JSONUtils.TYPE_CARD_LIST);
         for (HashMap<String, Object> card : cardList) {
             Event event = new Event();
             event.setEventName((String) card.get(ServiceAttributes.Graph.Event.NAME));
@@ -136,22 +135,22 @@ public class SmartCalendarUtils {
         return EventList;
     }
 
-    public static void setListLocation(ArrayList<Event> EventList, HashMap<String, Object> params){
+    public static void setListLocation(ArrayList<Event> EventList, HashMap<String, Object> params) {
         ArrayList<HashMap<String, Object>> cardList = (ArrayList<HashMap<String, Object>>) params.get(ServiceAttributes.Graph.CARD_LIST);
         for (HashMap<String, Object> card : cardList) {
-            if (card.get(ServiceAttributes.Graph.Event.START_TIME).equals(EventList.get(cardList.indexOf(card)).getBeginTime())){
+            if (card.get(ServiceAttributes.Graph.Event.START_TIME).equals(EventList.get(cardList.indexOf(card)).getBeginTime())) {
                 EventList.get(cardList.indexOf(card)).setLocation((String) card.get(ServiceAttributes.Graph.Place.NAME));
             }
         }
     }
 
-    public static Calendar getDate(Long time){
+    public static Calendar getDate(Long time) {
         Calendar date = Calendar.getInstance();
         date.setTimeInMillis(time);
         return date;
     }
 
-    public static String getHtml(ArrayList<Event> eventList){
+    public static String getHtml(ArrayList<Event> eventList) {
         String html = "";
         int year;
         ////////////////Time///////////////////
@@ -163,9 +162,9 @@ public class SmartCalendarUtils {
                 "\t}";
         /////////////////style/////////////////////
         String htmlString = "<html>\n" +
-               "<form class = \"eventform\">";
+                "<form class = \"eventform\">";
         ////////////////Recycle Events//////////////
-        for (Event event: eventList){
+        for (Event event : eventList) {
             String theEvent = event.getEventName();
             Long begintime = event.getBeginTime();
             Long endTime = event.getEndTime();
@@ -176,19 +175,20 @@ public class SmartCalendarUtils {
             endT.setTimeInMillis(endTime);
             int beginHour = beginT.get(Calendar.HOUR_OF_DAY);
             int endHour = endT.get(Calendar.HOUR_OF_DAY);
-           // year = beginT.get(Calendar.YEAR);
+            // year = beginT.get(Calendar.YEAR);
             SimpleDateFormat fmt = new SimpleDateFormat("HH:mm");
             String finalBeginTime = fmt.format(begintime);
             String finalEndTime = fmt.format(endTime);
-            int height = (beginHour-endHour) * 20;// ms->s->h->x20(20px/hour)
-            if (height < 75){
+            int height = (beginHour - endHour) * 20;// ms->s->h->x20(20px/hour)
+            if (height < 75) {
                 height = -1;
             }
             String h;
-            if (height == -1){
+            if (height == -1) {
                 h = "auto";
-            }else
-            {   h = "" + height + "px";}
+            } else {
+                h = "" + height + "px";
+            }
 
             htmlString = htmlString +
                     "<div class=\"datashower\" style=\"height:" + h + ";background:#08AED8;" + "border-radius:5px;\n" +
@@ -196,15 +196,15 @@ public class SmartCalendarUtils {
                     // 加上Time and Event
                     "<h class=\"text\" style=\"text-align:left; margin:10px;\">" + finalBeginTime + "</h >\n" +
                     "<p class=\"text\" style=\"text-align:center;margin:10px;\">" + theEvent +
-                    "<input id=\"pluginForm\"type=\"checkbox\" style=\"float:right;\" class=\"checkbox\""+ "name=\""+ theEvent + "\"></p >\n" +
+                    "<input id=\"pluginForm\"type=\"checkbox\" style=\"float:right;\" class=\"checkbox\"" + "name=\"" + theEvent + "\"></p >\n" +
                     "<h class=\"text\" style=\"text-align:left;margin:10px;\">" + finalEndTime +
-                    "</h>\n"+ "<h style=\"float: right;margin-right:10px;\">" + location + "</h>"+
+                    "</h>\n" + "<h style=\"float: right;margin-right:10px;\">" + location + "</h>" +
                     //////////////
                     "</div>";
         }
 
         ///////ending/////////
-        htmlString = htmlString +  "<div style=\"text-align: center\">\n" +
+        htmlString = htmlString + "<div style=\"text-align: center\">\n" +
 
                 "<input type=\"submit\" class=\"pluginButton\" style=\"" +
                 "  background: #3498db;\n" +
@@ -227,7 +227,7 @@ public class SmartCalendarUtils {
                 "  text-decoration: none;\n" +
                 "}\" value=\"Cancel\">\n" +
                 "\n" +
-                "</div>"+"</form>"+"</body> </html>";
+                "</div>" + "</form>" + "</body> </html>";
         return htmlString;
     }
 }
