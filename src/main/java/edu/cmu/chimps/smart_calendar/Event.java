@@ -1,12 +1,9 @@
 /*
   Copyright 2017 CHIMPS Lab, Carnegie Mellon University
-
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
   http://www.apache.org/licenses/LICENSE-2.0
-
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,40 +15,40 @@ package edu.cmu.chimps.smart_calendar;
 
 
 public class Event {
-    private String EventName;
-    private Long BeginTime;
-    private Long EndTime;
-    private String Location;
+    private String mEventName;
+    private Long mBeginTime;
+    private Long mEndTime;
+    private String mLocation;
 
     public Long getBeginTime() {
-        return BeginTime;
+        return mBeginTime;
     }
 
     public void setBeginTime(Long beginTime) {
-        BeginTime = beginTime;
+        mBeginTime = beginTime;
     }
 
     public Long getEndTime() {
-        return EndTime;
+        return mEndTime;
     }
 
     public void setEndTime(Long endTime) {
-        EndTime = endTime;
+        mEndTime = endTime;
     }
 
     public String getEventName() {
-        return EventName;
+        return mEventName;
     }
 
     public void setEventName(String eventName) {
-        EventName = eventName;
+        mEventName = eventName;
     }
 
     public String getLocation() {
-        return Location;
+        return mLocation;
     }
 
     public void setLocation(String location) {
-        Location = location;
+         mLocation = location;
     }
 }
