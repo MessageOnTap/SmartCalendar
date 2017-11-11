@@ -15,6 +15,8 @@ package edu.cmu.chimps.smart_calendar;
 
 
 
+import com.google.gson.reflect.TypeToken;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -38,7 +40,7 @@ public class SmartCalendarUtils {
 
 
     public static String getTimeString(HashMap<String, Object> params){
-        ArrayList<Long> messageTime = (ArrayList<Long>) params.get(ServiceAttributes.PMS.CURRENT_MESSAGE_EMBEDDED_TIME);      //CURRENT_MESSAGE_EMBEDDED_TIME
+        ArrayList<Long> messageTime = (ArrayList<Long>) params.get(ServiceAttributes.Internal.CURRENT_MESSAGE_EMBEDDED_TIME);      //CURRENT_MESSAGE_EMBEDDED_TIME
         StringBuilder timeString =  new StringBuilder();
         try {
             timeString.append(messageTime.get(0)).append(",").append(messageTime.get(1));
@@ -52,7 +54,8 @@ public class SmartCalendarUtils {
 
     public static ArrayList<Event> getEventList(HashMap<String, Object> params){
         ArrayList<Event> eventList = new ArrayList<>();
-        ArrayList<HashMap<String, Object>> cardList = (ArrayList<HashMap<String, Object>>)JSONUtils.jsonToSimpleObject((String)params.get(ServiceAttributes.Graph.CARD_LIST), JSONUtils.TYPE_CARD_LIST);
+        ArrayList<HashMap<String, Object>> cardList = (ArrayList<HashMap<String, Object>>)JSONUtils.jsonToSimpleObject((String)params.get(ServiceAttributes.Graph.CARD_LIST), (new TypeToken() {
+        }).getType()); //JSonutil.type_card_list
         for (HashMap<String, Object> card : cardList) {
             Event event = new Event();
             event.setEventName((String) card.get(ServiceAttributes.Graph.Event.NAME));

@@ -40,7 +40,7 @@ dependencies {
         exclude group: 'com.google.code.findbugs'
     })
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile ('messageontap:api:1.0.0-nightly-7') {
+    compile ('messageontap:api:1.0.0-nightly-13') {
         exclude group: 'org.apache.httpcomponents'
         exclude group: 'org.json'
     }
