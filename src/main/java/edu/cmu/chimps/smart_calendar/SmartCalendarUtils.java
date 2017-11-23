@@ -15,6 +15,8 @@ package edu.cmu.chimps.smart_calendar;
 
 
 
+import android.util.Log;
+
 import com.google.gson.reflect.TypeToken;
 
 import java.text.SimpleDateFormat;
@@ -27,6 +29,7 @@ import edu.cmu.chimps.messageontap_api.JSONUtils;
 
 import edu.cmu.chimps.messageontap_api.ServiceAttributes;
 
+import static edu.cmu.chimps.messageontap_api.ServiceAttributes.UI.Status;
 
 
 public class SmartCalendarUtils {
@@ -54,8 +57,11 @@ public class SmartCalendarUtils {
 
     public static ArrayList<Event> getEventList(HashMap<String, Object> params){
         ArrayList<Event> eventList = new ArrayList<>();
-        ArrayList<HashMap<String, Object>> cardList = (ArrayList<HashMap<String, Object>>)JSONUtils.jsonToSimpleObject((String)params.get(ServiceAttributes.Graph.CARD_LIST), (new TypeToken() {
-        }).getType()); //JSonutil.type_card_list
+
+        Log.e("calender utils:", (String)params.get(ServiceAttributes.Graph.CARD_LIST));
+
+        ArrayList<HashMap<String, Object>> cardList = (ArrayList<HashMap<String, Object>>)JSONUtils.jsonToSimpleObject((String)params.get(ServiceAttributes.Graph.CARD_LIST),
+                new TypeToken<ArrayList<HashMap<String, Object>>>(){}.getType()); //JSON
         for (HashMap<String, Object> card : cardList) {
             Event event = new Event();
             event.setEventName((String) card.get(ServiceAttributes.Graph.Event.NAME));
@@ -75,6 +81,25 @@ public class SmartCalendarUtils {
                 EventList.get(cardList.indexOf(card)).setLocation((String) card.get(ServiceAttributes.Graph.Place.NAME));
             }
         }
+    }
+
+    public static Status mEnumToString(String val) {
+        Status result = null;
+        switch (val) {
+            case "CLICKED":
+                result = Status.CLICKED;
+                break;
+            case "DISMISSED":
+                result = Status.DISMISSED;
+                break;
+            case "TIME_OUT":
+                result = Status.TIME_OUT;
+                break;
+            case "LEFT_APP":
+                result = Status.LEFT_APP;
+                break;
+        }
+        return result;
     }
 
     public static String getHtml(ArrayList<Event> eventList){

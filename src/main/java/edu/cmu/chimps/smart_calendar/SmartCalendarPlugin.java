@@ -35,6 +35,7 @@ import static edu.cmu.chimps.smart_calendar.SmartCalendarUtils.getEventList;
 import static edu.cmu.chimps.smart_calendar.SmartCalendarUtils.getHtml;
 import static edu.cmu.chimps.smart_calendar.SmartCalendarUtils.getTid;
 import static edu.cmu.chimps.smart_calendar.SmartCalendarUtils.getTimeString;
+import static edu.cmu.chimps.smart_calendar.SmartCalendarUtils.mEnumToString;
 import static edu.cmu.chimps.smart_calendar.SmartCalendarUtils.setListLocation;
 
 public class SmartCalendarPlugin extends MessageOnTapPlugin {
@@ -136,10 +137,10 @@ public class SmartCalendarPlugin extends MessageOnTapPlugin {
     @Override
     protected void initNewSession(long sid, HashMap<String, Object> params) throws Exception {
         Log.e(TAG, "Session created here!");
-        Log.e(TAG, JSONUtils.hashMapToString(params));
+        Log.e("Calanderplugin:", JSONUtils.hashMapToString(params));
 
         if (params.get(ServiceAttributes.Internal.TRIGGER_SOURCE).equals(SEMANTIC_TEMPLATE_SCHEDULE_REQUEST)){
-
+            //传进来的 trigger内容是 ''空？
             mTree.put(sid,(ParseTree) JSONUtils.jsonToSimpleObject((String)params
                     .get(ServiceAttributes.Internal.PARSE_TREE),ParseTree.class));
             Log.e(TAG, "Tree is " + params.get(ServiceAttributes.Internal.PARSE_TREE));
@@ -182,6 +183,7 @@ public class SmartCalendarPlugin extends MessageOnTapPlugin {
         }
         else{
             if (params.get(ServiceAttributes.Internal.CURRENT_MESSAGE_EMBEDDED_TIME).toString().isEmpty()){
+//              ／／ 不是empty 两个 0
                 Log.e(TAG, "initNewSession: get messsage embeded time");
                 ArrayList<ArrayList<Long>> messageTime = (ArrayList<ArrayList<Long>>)params.get(ServiceAttributes.Internal.CURRENT_MESSAGE_EMBEDDED_TIME);
                 mEventBeginTime.put(sid,messageTime.get(0).get(0));
@@ -196,15 +198,23 @@ public class SmartCalendarPlugin extends MessageOnTapPlugin {
                 params.put(ServiceAttributes.UI.ICON_TYPE_STRING, getResources().getString(R.string.fa_calendar));
             }
             mTidAddAction_ShowBubble.put(sid, createTask(sid, MethodConstants.UI_TYPE,
-                    MethodConstants.UI_METHOD_SHOW_BUBBLE, params));
+                    MethodConstants.UI_METHOD_SHOW_BUBBLE, params)); //这步是干嘛的
         }
+
+
+
     }
 
+    //本来应该在这里加task但是一个都没进去
     @Override
     protected void newTaskResponded(long sid, long tid, HashMap<String, Object> params) throws Exception {
         Log.e(TAG, "Got task response!");
-        Log.e(TAG, JSONUtils.hashMapToString(params));
+        Log.e("Calanderplugin:", JSONUtils.hashMapToString(params));
+        Log.e("Calanderplugin_sid", ""+sid);
+        Log.e("Calanderplugin_tid", ""+tid);
+
         if (tid == getTid(mTidPutTreeToGetTime, sid)){
+            Log.e("Calanderplugin_mission:", mTidPutTreeToGetTime.toString());
             try{
                 mEventList.put(sid, getEventList(params));
                 Log.e(TAG, "Event List=" + getEventList(params).toString());
@@ -239,6 +249,7 @@ public class SmartCalendarPlugin extends MessageOnTapPlugin {
             }
         } else if (tid == getTid(mTidPutTreeToGetLocation, sid)) {
             //getCardMessage and put it into params
+            Log.e("Calanderplugin_mission:", mTidPutTreeToGetLocation.toString());
             try {
                 setListLocation(mEventList.get(sid), params);
                 params.put(ServiceAttributes.UI.BUBBLE_FIRST_LINE, "Smart Calendar");
@@ -250,6 +261,7 @@ public class SmartCalendarPlugin extends MessageOnTapPlugin {
                 endSession(sid);
             }
         } else if (tid == getTid(mTidShowBubble, sid)){
+            Log.e("Calanderplugin_mission:", mTidShowBubble.toString());
             try {
                 if (params.get(ServiceAttributes.UI.STATUS).equals(ServiceAttributes.UI.Status.CLICKED)){
                     params.put("html_string", getHtml(eventListSortByTime(mEventList.get(sid))));
@@ -263,6 +275,7 @@ public class SmartCalendarPlugin extends MessageOnTapPlugin {
                 endSession(sid);
             }
         } else if (tid == getTid(mTidShowHtml, sid)){
+            Log.e("Calanderplugin_mission:", mTidShowHtml.toString());
             Log.e(TAG, "Successfully Run Action");
             Log.e(TAG, "Ending session (triggerListShow)");
             endSession(sid);
@@ -270,8 +283,10 @@ public class SmartCalendarPlugin extends MessageOnTapPlugin {
         }
         // Add Action
         if (tid == getTid(mTidAddAction_ShowBubble, sid)){
-            if (params.get(ServiceAttributes.UI.STATUS)
-                    .equals(ServiceAttributes.UI.Status.CLICKED)){       //BUBBLE_STATUS)==1
+            //value不匹配
+            Log.e("CalanderpluginAction:", mTidAddAction_ShowBubble.toString());
+            if (mEnumToString((String)params.get(ServiceAttributes.UI.STATUS))
+                    == ServiceAttributes.UI.Status.CLICKED){       //BUBBLE_STATUS)==1
                 params.put(ServiceAttributes.Action.CAL_EXTRA_TIME_START, mEventBeginTime);
                 params.put(ServiceAttributes.Action.CAL_EXTRA_TIME_END, mEventEndTime);
                 mTidAddAction.put(sid, createTask(sid, MethodConstants.ACTION_TYPE,
@@ -281,10 +296,14 @@ public class SmartCalendarPlugin extends MessageOnTapPlugin {
             }
 
         } else if (tid == getTid(mTidAddAction, sid)){
+            Log.e("CalanderpluginAction:", mTidAddAction.toString());
             Log.e(TAG, "Ending session (triggerListAdd)");
             endSession(sid);
             Log.e(TAG, "Session ended");
         }
+
+
+
     }
 
     private ArrayList<Event> eventListSortByTime(ArrayList<Event> events){
