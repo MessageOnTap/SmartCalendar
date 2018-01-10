@@ -83,24 +83,6 @@ public class SmartCalendarUtils {
         }
     }
 
-    public static Status mEnumToString(String val) {
-        Status result = null;
-        switch (val) {
-            case "CLICKED":
-                result = Status.CLICKED;
-                break;
-            case "DISMISSED":
-                result = Status.DISMISSED;
-                break;
-            case "TIME_OUT":
-                result = Status.TIME_OUT;
-                break;
-            case "LEFT_APP":
-                result = Status.LEFT_APP;
-                break;
-        }
-        return result;
-    }
 
     public static String getHtml(ArrayList<Event> eventList){
         ////////////////Time///////////////////
