@@ -49,7 +49,7 @@ public class SmartCalendarPlugin extends MessageOnTapPlugin {
     public static final String SEMANTIC_TEMPLATE_TODO_LIST = "todo_list";
     public static final String SEMANTIC_TEMPLATE_MEETUP = "meetup";
 
-
+    //Search from PG and to get schedule
     private HashMap<Long, Long> mTidPutTreeToGetTime = new HashMap<>();
     private HashMap<Long,Long> mTidPutTreeToGetLocation = new HashMap<>();
     private HashMap<Long,Long> mTidAddAction_ShowBubble = new HashMap<>();
@@ -98,39 +98,43 @@ public class SmartCalendarPlugin extends MessageOnTapPlugin {
         templates.add(new SemanticTemplate().name(SEMANTIC_TEMPLATE_SCHEDULE_REQUEST)
                 .tags(tags)
                 .direction(ParseTree.Direction.INCOMING));
-
+//
         /*
          * Semantic template II: to-do list.
          */
-        tags.clear();
-        reSet.clear();
-        reSet.add("I");
-        tags.add(new Tag("tag_I",
-                reSet, Tag.Type.MANDATORY));
-        tags.add(new Tag(ServiceAttributes.Internal.TAG_TIME,
+        Set<Tag> tags3 = new HashSet<>();
+        Set<String> reSet3 = new HashSet<>();
+        tags3.clear();
+        reSet3.clear();
+        reSet3.add("I");
+        tags3.add(new Tag("tag_I",
+                reSet3, Tag.Type.MANDATORY));
+        tags3.add(new Tag(ServiceAttributes.Internal.TAG_TIME,
                 new HashSet<String>(), Tag.Type.MANDATORY));
         templates.add(new SemanticTemplate().name(SEMANTIC_TEMPLATE_TODO_LIST)
-                .tags(tags)
+                .tags(tags3)
                 .direction(ParseTree.Direction.OUTGOING));
 
 
         /*
          * Semantic template III: meet up.
          */
-        tags.clear();
-        reSet.clear();
-        reSet.add("meet");
-        reSet.add("see");
-        reSet.add("hangout");
-        tags.add(new Tag("tag_meet",
-                reSet, Tag.Type.MANDATORY));
-        tags.add(new Tag(ServiceAttributes.Internal.TAG_TIME,
+        Set<Tag> tags2 = new HashSet<>();
+        Set<String> reSet2 = new HashSet<>();
+        tags2.clear();
+        reSet2.clear();
+        reSet2.add("meet");
+        reSet2.add("see");
+        reSet2.add("hangout");
+        tags2.add(new Tag("tag_meet",
+                reSet2, Tag.Type.MANDATORY));
+        tags2.add(new Tag(ServiceAttributes.Internal.TAG_TIME,
                 new HashSet<String>(), Tag.Type.MANDATORY));
-        tags.add(new Tag(ServiceAttributes.Internal.TAG_LOCATION,
+        tags2.add(new Tag(ServiceAttributes.Internal.TAG_LOCATION,
                 new HashSet<String>(), Tag.Type.OPTIONAL));
         templates.add(new SemanticTemplate().name(SEMANTIC_TEMPLATE_MEETUP)
-                .tags(tags));
-
+                .tags(tags2).direction(ParseTree.Direction.INCOMING));
+        Log.e(TAG, templates.toString());
         return templates;
     }
 
@@ -193,6 +197,7 @@ public class SmartCalendarPlugin extends MessageOnTapPlugin {
                 params.put(ServiceAttributes.UI.ICON_TYPE_STRING, getResources().getString(R.string.fa_calendar));
             }
             else{
+                Log.e(TAG, "initNewSession: not special character");
                 params.put(ServiceAttributes.UI.BUBBLE_FIRST_LINE, "Add Calendar");
                 params.put(ServiceAttributes.UI.BUBBLE_SECOND_LINE, "");
                 params.put(ServiceAttributes.UI.ICON_TYPE_STRING, getResources().getString(R.string.fa_calendar));
@@ -298,9 +303,9 @@ public class SmartCalendarPlugin extends MessageOnTapPlugin {
             endSession(sid);
             Log.e(TAG, "Session ended");
         }
-        params.put("html_string", "<h1>123213123</h1>");
-                    mTidShowHtml.put(sid, createTask(sid, MethodConstants.UI_TYPE,
-                            MethodConstants.UI_METHOD_LOAD_WEBVIEW, params));
+//        params.put("html_string", "<h1>123213123</h1>");
+//                    mTidShowHtml.put(sid, createTask(sid, MethodConstants.UI_TYPE,
+//                            MethodConstants.UI_METHOD_LOAD_WEBVIEW, params));
 
 
     }
